@@ -1,4 +1,9 @@
 from pathlib import Path
+import environ
+
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +28,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'crispy_forms',
+    'crispy_bootstrap4',
+    'contact.apps.ContactConfig',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -105,3 +115,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 AUTH_USER_MODEL = 'users.User'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# адрес электронной почты, на который придут сообщения
+RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
