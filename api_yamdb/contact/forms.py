@@ -7,8 +7,6 @@ class ContactForm(forms.Form):
 
     username = forms.CharField(max_length=120)
     email = forms.EmailField()
-    # inquiry = forms.CharField(max_length=70)
-    # message = forms.CharField(widget=forms.Textarea)
 
     def get_info(self):
         """
