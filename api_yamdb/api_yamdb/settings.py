@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'contact.apps.ContactConfig',
     'crispy_forms',
     'crispy_bootstrap4',
-
 ]
 
 MIDDLEWARE = [
