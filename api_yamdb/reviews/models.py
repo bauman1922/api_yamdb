@@ -3,10 +3,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from usrs.models import User
 
 
-class Title(models.Model):
-    pass
-
-
 class Review(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews')
