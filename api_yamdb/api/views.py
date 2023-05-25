@@ -1,7 +1,8 @@
-from rest_framework import viewsets, mixins, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-
 from reviews.models import Category, Genre, Title
+from filters import TitleFilter
 
 from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
@@ -32,5 +33,6 @@ class GenreViewSet(SimpleViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-
-
+    pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
