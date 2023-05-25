@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-from reviews.models import Category, Genre, Title
-from filters import TitleFilter
 
+from reviews.models import Category, Genre, Title
+
+from .filters import TitleFilter
 from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
 
