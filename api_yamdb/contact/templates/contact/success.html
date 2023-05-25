@@ -1,0 +1,8 @@
+{% extends 'contact/base.html' %}
+
+{% block body %}
+<div class="mx-auto my-4 text-center">
+    <h1 class="fw-bolder text-success">Проверьте вашу почту</h1>
+    <p class="my-5">Не пришёл токен? <a href="{% url 'contact:contact' %}">Отправить повторно</a></p>
+</div>
+{% endblock %}

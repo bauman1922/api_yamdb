@@ -43,3 +43,4 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method == 'GET':
             return TitleListSerializer
         return TitleSerializer
+
