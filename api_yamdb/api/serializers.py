@@ -1,5 +1,6 @@
-from rest_framework import serializers
 import datetime as dt
+
+from rest_framework import serializers
 
 from reviews.models import Category, Genre, GenreTitle, Title
 
@@ -47,14 +48,7 @@ class TitleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description', 'genre', 'category'
         )
         model = Title
 
-
-
-# class GenreTitleSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = GenreTitle
-#         fields = '__all__'
