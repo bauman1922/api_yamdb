@@ -2,6 +2,7 @@ import datetime as dt
 
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
@@ -30,7 +31,7 @@ class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
         model = Title
 
@@ -45,10 +46,11 @@ class TitleSerializer(serializers.ModelSerializer):
 class TitleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
         model = Title
 
