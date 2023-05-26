@@ -3,13 +3,14 @@ from rest_framework.routers import DefaultRouter
 
 from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 
-router = DefaultRouter()
+app_name = 'api'
+v1_router = DefaultRouter()
 
-router.register('categories', CategoryViewSet)
-router.register('genres', GenreViewSet)
-router.register('titles', TitleViewSet)
+v1_router.register('categories', CategoryViewSet, basename='categories')
+v1_router.register('genres', GenreViewSet, basename='genres')
+v1_router.register('titles', TitleViewSet, basename='titles')
 
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('v1/', include(v1_router.urls)),
 ]
