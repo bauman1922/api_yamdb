@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from users.models import User
+from django.conf import settings
 
 
 class Category(models.Model):
@@ -122,7 +123,7 @@ class Review(models.Model):
         ]
 
     def __str__(self):
-        return self.text
+        return self.text[:settings.QTY_OUTPUT]
 
 
 class Comment(models.Model):
@@ -135,4 +136,4 @@ class Comment(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True)
 
     def __str__(self):
-        return self.text
+        return self.text[:settings.QTY_OUTPUT]
