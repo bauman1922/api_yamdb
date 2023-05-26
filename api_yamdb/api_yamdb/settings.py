@@ -5,7 +5,6 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -30,6 +29,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'api.apps.ApiConfig',
+    'django_filters',
     'contact.apps.ContactConfig',
     'crispy_forms',
     'crispy_bootstrap4',
