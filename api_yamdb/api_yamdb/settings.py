@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -28,8 +27,6 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'django_filters',
     'contact.apps.ContactConfig',
-    # 'crispy_forms',
-    # 'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -113,15 +110,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 AUTH_USER_MODEL = 'users.User'
 
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# # EMAIL_HOST = env('EMAIL_HOST')
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-# # адрес электронной почты, на который придут сообщения
-# RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
