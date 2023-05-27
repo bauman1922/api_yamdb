@@ -79,6 +79,11 @@ class Title(models.Model):
         help_text="Введите название категории",
         null=True
     )
+    rating = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Рейтинг произведения"
+    )
 
     class Meta:
         ordering = ("category", "name")
