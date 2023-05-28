@@ -19,7 +19,7 @@ v1_router.register(
     CommentViewSet, basename='comments')
 
 urlpatterns = [
-    path('api/v1/auth/signup/', SignUpView.as_view()),
-    path('api/v1/auth/token/', TokenObtainView.as_view()),
+    path('v1/auth/signup/', SignUpView.as_view()),
+    path('v1/auth/token/', TokenObtainView.as_view()),
     path('v1/', include(v1_router.urls)),
 ]

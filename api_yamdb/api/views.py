@@ -14,7 +14,7 @@ from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
 from .filters import TitleFilter
-from .permissions import IsAdminOnly
+from .permissions import IsAdminOnly, IsAdminAuthorModeratorOrReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignUpSerializer,
                           TitleListSerializer, TitleSerializer,
@@ -159,7 +159,8 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAdminAuthorModeratorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -174,7 +175,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAdminAuthorModeratorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):

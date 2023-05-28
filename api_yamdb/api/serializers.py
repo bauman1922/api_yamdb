@@ -1,7 +1,7 @@
 import datetime as dt
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from rest_framework.validators import UniqueValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 from users.validators import validate_email, validate_username
@@ -131,21 +131,29 @@ class TitleListSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True
-    )
-    title = serializers.SlugRelatedField(
-        slug_field='name', read_only=True
-    )
+        slug_field='username',
+        read_only=True)
 
     class Meta:
         model = Review
-        fields = '__all__'
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=('author', 'title')
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
+
+    def validate(self, data):
+        if self.context.get('request').method != 'POST':
+            return data
+        reviewer = self.context.get('request').user
+        title_id = self.context.get('view').kwargs['title_id']
+        if Review.objects.filter(author=reviewer, title_id=title_id).exists():
+            raise serializers.ValidationError(
+                'Нельзя оставить отзыв на одно произведение дважды!'
             )
-        ]
+        return data
+
+    def validate(self, data):
+        if not 1 <= data['score'] <= 10:
+            raise serializers.ValidationError(
+                'Оценка может быть от 1 до 10!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -154,4 +162,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
