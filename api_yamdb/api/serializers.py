@@ -139,14 +139,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'score', 'pub_date')
 
     def validate(self, data):
-        if self.context.get('request').method != 'POST':
-            return data
-        reviewer = self.context.get('request').user
-        title_id = self.context.get('view').kwargs['title_id']
-        if Review.objects.filter(author=reviewer, title_id=title_id).exists():
-            raise serializers.ValidationError(
-                'Нельзя оставить отзыв на одно произведение дважды!'
-            )
+        if self.context['request'].method == 'POST':
+            reviewer = self.context['request'].user
+            title_id = self.context['view'].kwargs['title_id']
+            if Review.objects.filter(author=reviewer,
+                                     title_id=title_id).exists():
+                raise serializers.ValidationError(
+                    'Нельзя оставить отзыв на одно произведение дважды!'
+                )
         return data
 
     def validate(self, data):
