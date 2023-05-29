@@ -151,7 +151,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             reviewer = self.context['request'].user
             title_id = self.context['view'].kwargs['title_id']
-            if Review.objects.filter(author=reviewer, title_id=title_id).exists():
+            if Review.objects.filter(author=reviewer,
+                                     title_id=title_id).exists():
                 raise serializers.ValidationError(
                     'Нельзя оставить отзыв на одно произведение дважды!'
                 )
