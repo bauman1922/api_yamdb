@@ -1,9 +1,8 @@
 import datetime
 from csv import DictReader
-from django.utils.timezone import make_aware
 
 from django.core.management import BaseCommand
-
+from django.utils.timezone import make_aware
 from reviews.models import Comment, Review
 from users.models import User
 
