@@ -108,9 +108,13 @@ class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
-    score = models.IntegerField(verbose_name='Оценка произведения',
-                                validators=(MinValueValidator(1),
-                                            MaxValueValidator(10)))
+    score = models.IntegerField(
+        verbose_name='Оценка произведения',
+        validators=(
+            MinValueValidator(1, 'Рейтинг не может быть меньше 1!'),
+            MaxValueValidator(10, 'Рейтинг не может быть больше 10!')
+        )
+    )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
