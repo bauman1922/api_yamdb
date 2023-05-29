@@ -1,7 +1,9 @@
 import datetime as dt
 
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 from users.validators import validate_email, validate_username
@@ -103,6 +105,7 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         many=True
     )
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = (
@@ -117,17 +120,23 @@ class TitleSerializer(serializers.ModelSerializer):
                 'Год выпуска не может быть больше текущего!')
         return value
 
+    def get_rating(self, obj):
+        return obj.reviews.aggregate(Avg('score')).get('score__avg')
+
 
 class TitleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
-    rating = serializers.FloatField(read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
         model = Title
+
+    def get_rating(self, obj):
+        return obj.reviews.aggregate(Avg('score')).get('score__avg')
 
 
 class ReviewSerializer(serializers.ModelSerializer):

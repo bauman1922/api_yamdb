@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -78,11 +79,6 @@ class Title(models.Model):
         verbose_name="Название категории",
         help_text="Введите название категории",
         null=True
-    )
-    rating = models.FloatField(
-        null=True,
-        blank=True,
-        verbose_name="Рейтинг произведения"
     )
 
     class Meta:
