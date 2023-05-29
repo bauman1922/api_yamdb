@@ -3,6 +3,7 @@ from csv import DictReader
 
 from django.core.management import BaseCommand
 from django.utils.timezone import make_aware
+
 from reviews.models import Review, Title
 from users.models import User
 
