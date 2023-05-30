@@ -1,5 +1,10 @@
 from csv import DictReader
 
+<<<<<<< HEAD
+from django.core.management.base import BaseCommand
+from reviews.models import Genre, Title
+
+=======
 from django.core.management import BaseCommand
 from reviews.models import Genre, GenreTitle, Title
 
@@ -8,15 +13,15 @@ ERROR_MESSAGE = """
 сначала удалите файл db.sqlite3, чтобы уничтожить базу данных.
 Затем запустите `python manage.py migrate` для новой пустой
 базы данных с таблицами"""
+>>>>>>> origin/feature/review-score-validators
 
 
 class Command(BaseCommand):
     help = "Выгрузка данных из genre_title.csv"
 
     def handle(self, *args, **options):
-        if GenreTitle.objects.exists():
-            print("Данные уже загружены...выход!")
-            print(ERROR_MESSAGE)
+        if not Title.objects.exists() or not Genre.objects.exists():
+            print("Отсутствуют данные для моделей Title и Genre...выход!")
             return
         print("Загрузка Genre_Title данных")
 
@@ -24,12 +29,18 @@ class Command(BaseCommand):
             for row in DictReader(open('static/data/genre_title.csv')):
                 title_id = row['title_id']
                 genre_id = row['genre_id']
-                genre = Genre.objects.get(id=genre_id)
-                title = Title.objects.get(id=title_id)
-                genre_title = GenreTitle(id=row['id'], title=title,
-                                         genre=genre)
-                genre_title.save()
-                print(f"Genre_Title '{genre_title.title}' импортирован.")
+                try:
+                    genre = Genre.objects.get(id=genre_id)
+                    title = Title.objects.get(id=title_id)
+                    if not title.genre.filter(id=genre_id).exists():
+                        title.genre.add(genre)
+                        print(f"Genre_Title '{title}' импортирован.")
+                    else:
+                        print(f"Genre_Title '{title}' уже существует.")
+                except Genre.DoesNotExist:
+                    print(f"Жанр с ID {genre_id} не существует.")
+                except Title.DoesNotExist:
+                    print(f"Произведение с ID {title_id} не существует.")
         except FileNotFoundError:
             print("CSV file не найден.")
         except Exception as e:

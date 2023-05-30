@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, mixins, status, viewsets
+from rest_framework import filters, generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
@@ -14,6 +15,7 @@ from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
 from .filters import TitleFilter
+from .mixins import SimpleViewSet
 from .permissions import (IsAdminAuthorModeratorOrReadOnly, IsAdminOnly,
                           IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
@@ -36,8 +38,8 @@ class SignUpView(generics.CreateAPIView):
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
-        email = serializer.data.get('email')
+        username = serializer.validated_data.get('username')
+        email = serializer.validated_data.get('email')
         user, created = User.objects.get_or_create(
             username=username,
             email=email
@@ -65,8 +67,8 @@ class TokenObtainView(generics.CreateAPIView):
     def post(self, request):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
-        confirmation_code = serializer.data.get('confirmation_code')
+        username = serializer.validated_data.get('username')
+        confirmation_code = serializer.validated_data.get('confirmation_code')
         user = get_object_or_404(User, username=username)
 
         if default_token_generator.check_token(user, confirmation_code):
@@ -120,17 +122,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class SimpleViewSet(mixins.ListModelMixin,
-                    mixins.CreateModelMixin,
-                    mixins.DestroyModelMixin,
-                    viewsets.GenericViewSet):
-    pass
-
-
 class CategoryViewSet(SimpleViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -140,7 +134,6 @@ class CategoryViewSet(SimpleViewSet):
 class GenreViewSet(SimpleViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -148,7 +141,8 @@ class GenreViewSet(SimpleViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        score=Avg("reviews__score"))
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly, IsAuthenticatedOrReadOnly)
     pagination_class = LimitOffsetPagination

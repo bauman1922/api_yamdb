@@ -9,6 +9,11 @@ CHOICES = (
 
 
 class User(AbstractUser):
+    class RoleChoices(models.TextChoices):
+        USER = 'user'
+        ADMIN = 'admin'
+        MODERATOR = 'moderator'
+
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -16,6 +21,6 @@ class User(AbstractUser):
     role = models.CharField(
         'Роль пользователя',
         max_length=25,
-        choices=CHOICES,
-        default='user',
+        choices=RoleChoices.choices,
+        default=RoleChoices.USER,
     )

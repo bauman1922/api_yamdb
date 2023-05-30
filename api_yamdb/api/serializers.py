@@ -1,11 +1,9 @@
-import datetime as dt
-
-from django.db.models import Avg
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from users.validators import validate_email, validate_username
+from users.validators import validate_username
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -21,11 +19,15 @@ class SignUpSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        if User.objects.filter(username=data['username'],
-                               email=data['email']).exists():
+
+        filter_user_email = User.objects.filter(username=data['username'],
+                                                email=data['email']).exists()
+        filter_user = User.objects.filter(username=data['username']).exists()
+        filter_email = User.objects.filter(email=data['email']).exists()
+
+        if filter_user_email:
             return data
-        if (User.objects.filter(username=data['username']).exists()
-                or User.objects.filter(email=data['email']).exists()):
+        if filter_email or filter_user:
             raise serializers.ValidationError(
                 'Такой пользователь уже есть'
             )
@@ -53,8 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
         max_length=200,
-        validators=[validate_email,
-                    UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
     class Meta:
@@ -65,14 +66,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class UserMeSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        required=True,
-        max_length=50,
-        validators=[validate_username,
-                    UniqueValidator(queryset=User.objects.all())]
-    )
-
+class UserMeSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
@@ -85,13 +79,13 @@ class UserMeSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -104,23 +98,19 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         many=True
     )
-    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description', 'genre', 'category'
         )
         model = Title
 
     def validate_year(self, value):
-        year = dt.date.today().year
-        if value > year:
-            raise serializers.ValidationError(
-                'Год выпуска не может быть больше текущего!')
+        current_year = timezone.now().year
+        if value > current_year:
+            raise serializers.ValidationError('Год выпуска '
+                                              'не может быть больше текущего!')
         return value
-
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(Avg('score')).get('score__avg')
 
 
 class TitleListSerializer(serializers.ModelSerializer):
@@ -135,7 +125,7 @@ class TitleListSerializer(serializers.ModelSerializer):
         model = Title
 
     def get_rating(self, obj):
-        return obj.reviews.aggregate(Avg('score')).get('score__avg')
+        return obj.score
 
 
 class ReviewSerializer(serializers.ModelSerializer):
