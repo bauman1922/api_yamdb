@@ -63,3 +63,8 @@ python manage.py load_csv_comment
 python manage.py load_csv_genre_title
 
 ```
+
+#### Авторы проекта
+* [Veronika Lapteva](https://github.com/VeronikaLapteva)
+* [Daniil Malyshev](https://github.com/YaStirayuLaskoy)
+* [Sergey Samorukov](https://github.com/bauman1922)
