@@ -3,9 +3,9 @@ from csv import DictReader
 <<<<<<< HEAD
 from django.core.management.base import BaseCommand
 from reviews.models import Genre, Title
+
 =======
 from django.core.management import BaseCommand
-
 from reviews.models import Genre, GenreTitle, Title
 
 ERROR_MESSAGE = """
