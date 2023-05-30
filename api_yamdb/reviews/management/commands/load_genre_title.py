@@ -1,7 +1,19 @@
 from csv import DictReader
 
+<<<<<<< HEAD
 from django.core.management.base import BaseCommand
 from reviews.models import Genre, Title
+=======
+from django.core.management import BaseCommand
+
+from reviews.models import Genre, GenreTitle, Title
+
+ERROR_MESSAGE = """
+Если вам нужно перезагрузить дочерние данные из файла CSV,
+сначала удалите файл db.sqlite3, чтобы уничтожить базу данных.
+Затем запустите `python manage.py migrate` для новой пустой
+базы данных с таблицами"""
+>>>>>>> origin/feature/review-score-validators
 
 
 class Command(BaseCommand):
