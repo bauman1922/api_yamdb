@@ -36,8 +36,8 @@ class SignUpView(generics.CreateAPIView):
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
-        email = serializer.data.get('email')
+        username = serializer.validated_data.get('username')
+        email = serializer.validated_data.get('email')
         user, created = User.objects.get_or_create(
             username=username,
             email=email
@@ -65,8 +65,8 @@ class TokenObtainView(generics.CreateAPIView):
     def post(self, request):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.data.get('username')
-        confirmation_code = serializer.data.get('confirmation_code')
+        username = serializer.validated_data.get('username')
+        confirmation_code = serializer.validated_data.get('confirmation_code')
         user = get_object_or_404(User, username=username)
 
         if default_token_generator.check_token(user, confirmation_code):

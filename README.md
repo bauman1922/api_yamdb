@@ -63,3 +63,8 @@ python manage.py load_csv_comment
 python manage.py load_csv_genre_title
 
 ```
+#### Авторы:
+Серый
+Вероня
+Данчело
+Михан Иванов

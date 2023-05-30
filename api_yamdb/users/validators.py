@@ -13,11 +13,3 @@ def validate_username(value):
             'Некорректные символы в username'
         )
     return value
-
-
-def validate_email(value):
-    if value.lower() == '':
-        raise ValidationError(
-            'Это поле обязательно должно быть заполненно'
-        )
-    return value
