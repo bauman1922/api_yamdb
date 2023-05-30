@@ -2,7 +2,8 @@ import datetime
 from csv import DictReader
 
 from django.core.management import BaseCommand
-from django.utils.timezone import make_aware
+from django.core.exceptions import ObjectDoesNotExist
+
 from reviews.models import Review, Title
 from users.models import User
 
@@ -26,17 +27,19 @@ class Command(BaseCommand):
         try:
             for row in DictReader(open('static/data/review.csv')):
                 title_id = row['title_id']
-                author_username = row.get('author')
+                author_id = row.get('author')
                 pub_date_str = row['pub_date']
                 pub_date = datetime.datetime.strptime(
                     pub_date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-                pub_date = make_aware(pub_date)
-
                 title = Title.objects.get(id=title_id)
-                author = User.objects.filter(username=author_username).first()
 
-                review = Review(
-                    id=row['id'],
+                try:
+                    author = User.objects.get(id=author_id)
+                except ObjectDoesNotExist:
+                    print(f"Пользователь с идентификатором {author_id}"
+                          "не найден")
+                    continue
+                review = Review.objects.create(
                     title=title,
                     text=row['text'],
                     author=author,
@@ -44,10 +47,6 @@ class Command(BaseCommand):
                     pub_date=pub_date
                 )
                 review.save()
-                print(f"Review '{review.title}' импортирован.")
-
-        except FileNotFoundError:
-            print("CSV файл не найден.")
-
+                print(f"Genre'{review.title}' импортирован.")
         except Exception as e:
             print(f"Произошла ошибка: {str(e)}")

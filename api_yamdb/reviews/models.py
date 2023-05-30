@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import User
+
+from .validators import validate_year
 
 
 class Category(models.Model):
@@ -55,6 +58,7 @@ class Title(models.Model):
         help_text="Введите название произведения",
     )
     year = models.IntegerField(
+        validators=(validate_year,),
         verbose_name="Год создания",
         help_text="Введите год создания произведения",
     )
@@ -67,7 +71,6 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through="GenreTitle",
         verbose_name="Название жанра",
         help_text="Введите название жанра"
     )
@@ -87,19 +90,6 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class GenreTitle(models.Model):
-    genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE)
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return f'{self.genre} {self.title}'
 
 
 class Review(models.Model):
