@@ -4,11 +4,6 @@ from csv import DictReader
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
 
-<<<<<<< HEAD
-=======
-from django.utils.timezone import make_aware
-
->>>>>>> origin/feature/review-score-validators
 from reviews.models import Review, Title
 from users.models import User
 
