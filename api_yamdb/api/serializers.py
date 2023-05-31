@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from users.validators import validate_email, validate_username
+from users.validators import validate_username
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -21,11 +21,15 @@ class SignUpSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        if User.objects.filter(username=data['username'],
-                               email=data['email']).exists():
+
+        filter_user_email = User.objects.filter(username=data['username'],
+                                                email=data['email']).exists()
+        filter_user = User.objects.filter(username=data['username']).exists()
+        filter_email = User.objects.filter(email=data['email']).exists()
+
+        if filter_user_email:
             return data
-        if (User.objects.filter(username=data['username']).exists()
-                or User.objects.filter(email=data['email']).exists()):
+        if filter_email or filter_user:
             raise serializers.ValidationError(
                 'Такой пользователь уже есть'
             )
@@ -53,8 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
         max_length=200,
-        validators=[validate_email,
-                    UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
     class Meta:
@@ -65,14 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class UserMeSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        required=True,
-        max_length=50,
-        validators=[validate_username,
-                    UniqueValidator(queryset=User.objects.all())]
-    )
-
+class UserMeSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
