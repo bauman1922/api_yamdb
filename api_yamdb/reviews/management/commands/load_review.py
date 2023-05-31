@@ -3,6 +3,7 @@ from csv import DictReader
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
+
 from reviews.models import Review, Title
 from users.models import User
 
