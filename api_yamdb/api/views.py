@@ -14,7 +14,6 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
-
 from .filters import TitleFilter
 from .mixins import SimpleViewSet
 from .permissions import (IsAdminAuthorModeratorOrReadOnly, IsAdminOnly,
@@ -126,24 +125,16 @@ class UserViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(SimpleViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
 class GenreViewSet(SimpleViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().annotate(
-        score=Avg("reviews__score"))
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly, IsAuthenticatedOrReadOnly)
     pagination_class = LimitOffsetPagination

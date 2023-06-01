@@ -68,12 +68,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(UserSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'username', 'email', 'first_name',
-            'last_name', 'bio', 'role'
-        )
+
+    class Meta(UserSerializer.Meta):
         read_only_fields = ('role',)
 
 
@@ -117,16 +113,13 @@ class TitleSerializer(serializers.ModelSerializer):
 class TitleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
         model = Title
-
-    def get_rating(self, obj):
-        return obj.score
 
 
 class ReviewSerializer(serializers.ModelSerializer):

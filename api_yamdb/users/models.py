@@ -1,12 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-CHOICES = (
-    ('user', 'Пользователь'),
-    ('moderator', 'Модератор'),
-    ('admin', 'Администратор')
-)
-
 
 class User(AbstractUser):
     class RoleChoices(models.TextChoices):
