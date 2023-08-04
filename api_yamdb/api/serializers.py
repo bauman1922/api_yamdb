@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -97,10 +98,8 @@ class TitleSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
-        )
         model = Title
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
     def validate_year(self, value):
         current_year = timezone.now().year
@@ -113,13 +112,16 @@ class TitleSerializer(serializers.ModelSerializer):
 class TitleListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
-    rating = serializers.IntegerField(read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
-        fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
-        )
         model = Title
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+
+    def get_rating(self, instance):
+        rating = instance.reviews.aggregate(Avg('score'))['score__avg']
+        return rating or 0
 
 
 class ReviewSerializer(serializers.ModelSerializer):
